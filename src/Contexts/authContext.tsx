@@ -1,0 +1,39 @@
+import React, {useState, createContext} from "react";
+import { ChildrenProps } from "./deleteContext";
+
+export interface UserDataProps{
+    email: string,
+}
+
+export type AuthType = {
+    userData: UserDataProps,
+    setUserData: Function
+}
+
+const AuthContext = createContext<AuthType|null>(null);
+
+export const AuthProvider: React.FC<ChildrenProps> = ({ children }) => {
+    const [userData, setUserData] = useState(() => {
+      const email = localStorage.getItem('@Project:email');
+  
+      if (email) {
+        try {
+          return { email: JSON.parse(email) };
+        } catch (error) {
+          console.error("Error parsing JSON from localStorage:", error);
+          // Handle the error, or provide a default value if parsing fails.
+        }
+      }
+  
+      return { email: "" };
+    });
+  
+    return (
+      <AuthContext.Provider value={{ userData, setUserData }}>
+        {children}
+      </AuthContext.Provider>
+    );
+  }
+  
+
+export default AuthContext;
